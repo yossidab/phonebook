@@ -72,10 +72,10 @@ The server will start on `http://localhost:5000`.
 
 - **GET /api/contacts/get-contacts**: Retrieve all contacts with pagination and search, prefix search for Phone/FirstName/LastName/Address, like our mobile do.
 - **GET /api/contacts/get-all-contact**: Retrieve all contacts with pagination without search.
-- **POST /api/contacts/create-contact**: Add a new contact.
+- **POST /api/contacts/create-contact**: Add a new contact (If this phone number is not in use by another contact).
 - **GET /api/contacts/get-contact-by-id/:id**: Retrieve a single contact by ID.
 - **GET /api/contacts/get-contact-by-phone:phone**: Retrieve a single contact by Phone.
-- **PUT /api/contacts/update-contact/:id**: Update a contact by ID.
+- **PUT /api/contacts/update-contact/:id**: Update a contact by ID (If the new phone number is not in use by another contact).
 - **DELETE /api/contacts/delete-contact/:id**: Delete a contact by ID.
 
 ## Testing
