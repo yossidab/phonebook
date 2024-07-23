@@ -70,7 +70,8 @@ The server will start on `http://localhost:5000`.
 
 ### API Endpoints
 
-- **GET /api/contacts/get-contacts**: Retrieve all contacts with pagination and search.
+- **GET /api/contacts/get-contacts**: Retrieve all contacts with pagination and search, prefix search for Phone/FirstName/LastName/Address, like our mobile do.
+- **GET /api/contacts/get-all-contact**: Retrieve all contacts with pagination without search.
 - **POST /api/contacts/create-contact**: Add a new contact.
 - **GET /api/contacts/get-contact-by-id/:id**: Retrieve a single contact by ID.
 - **GET /api/contacts/get-contact-by-phone:phone**: Retrieve a single contact by Phone.
