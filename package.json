@@ -6,8 +6,7 @@
   "scripts": {
     "start": "node server.js",
     "test": "mocha --exit",
-    "test:unit": "mocha --exit test/utils.test.js",
-    "test:integration": "mocha --exit test/api.test.js",
+    "test:unit": "mocha --exit test/api.test.js",
     "nodemon": "nodemon server.js"
   },
   "dependencies": {
