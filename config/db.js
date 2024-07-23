@@ -1,14 +1,14 @@
 const mongoose = require('mongoose');
+const logger = require('../logger');
 
 mongoose.connect(process.env.MONGO_URI, {
   useNewUrlParser: true,
   useUnifiedTopology: true
+}).then(() => {
+  logger.info('Connected to MongoDB');
+}).catch((err) => {
+  logger.error('Failed to connect to MongoDB', err);
+  process.exit(1); // Exit the application with a failure code
 });
 
-const db = mongoose.connection;
-db.on('error', console.error.bind(console, 'MongoDB connection error:'));
-db.once('open', () => {
-  console.log('Connected to MongoDB');
-});
-
-module.exports = db;
+module.exports = mongoose.connection;

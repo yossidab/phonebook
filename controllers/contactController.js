@@ -1,11 +1,7 @@
 const Contact = require('../models/contact');
 const logger = require('../logger');
-const redis = require('redis');
 const { promisify } = require('util');
 
-const redisClient = redis.createClient();
-const getAsync = promisify(redisClient.get).bind(redisClient);
-const setAsync = promisify(redisClient.set).bind(redisClient);
 const DEFAULT_LIMIT = 10; // Default limit for pagination
 
 // Create a new contact
@@ -56,14 +52,11 @@ exports.getContacts = async (req, res) => {
   }
 };
 
-// Get all contacts from the database without filtering, using Redis for caching
+// Get all contacts from the database without filtering
 exports.getAllContacts = async (req, res) => {
   const { page = 1, limit = DEFAULT_LIMIT } = req.query;
-  const cacheKey = `allContacts:${page}:${limit}`;
   logger.debug(`Getting all contacts from the database with page: ${page}, limit: ${limit}`);
   try {
-    const cachedContacts = await getAsync(cacheKey);
-
     if (cachedContacts) {
       logger.info('Returning cached contacts');
       return res.json(JSON.parse(cachedContacts));
@@ -76,10 +69,7 @@ exports.getAllContacts = async (req, res) => {
       .skip((page - 1) * validatedLimit)
       .exec();
     const count = await Contact.countDocuments();
-
-    // Cache the results for future requests
-    await setAsync(cacheKey, JSON.stringify({ contacts, totalPages: Math.ceil(count / validatedLimit), currentPage: page }), 'EX', 3600); // Cache for 1 hour
-    logger.info('Contacts retrieved from the database and cached');
+    logger.info('Contacts retrieved from the database');
 
     res.json({
       contacts,
