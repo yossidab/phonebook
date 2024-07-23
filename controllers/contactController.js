@@ -68,15 +68,10 @@ exports.getContacts = async (req, res) => {
 
 // Get all contacts from the database without filtering
 exports.getAllContacts = async (req, res) => {
-  const { page = 1, limit = DEFAULT_LIMIT } = req.query;
-  logger.debug(`Getting all contacts from the database with page: ${page}, limit: ${limit}`);
+  const { page = 1 } = req.query;
+  logger.debug(`Getting all contacts from the database with page: ${page}, limit: ${DEFAULT_LIMIT}`);
   try {
-    if (cachedContacts) {
-      logger.info('Returning cached contacts');
-      return res.json(JSON.parse(cachedContacts));
-    }
-
-    const validatedLimit = Math.min(parseInt(limit, 10) || DEFAULT_LIMIT, DEFAULT_LIMIT);
+    const validatedLimit = Math.min(parseInt(DEFAULT_LIMIT, 10), DEFAULT_LIMIT);
     const contacts = await Contact.find()
       .sort({ firstName: 1, lastName: 1 })
       .limit(validatedLimit)
