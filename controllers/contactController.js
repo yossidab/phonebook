@@ -5,9 +5,23 @@ const { promisify } = require('util');
 const DEFAULT_LIMIT = 10; // Default limit for pagination
 
 // Create a new contact
+// Create a new contact
 exports.createContact = async (req, res) => {
   logger.debug('Creating a new contact', { body: req.body });
   try {
+    const { firstName, lastName, phone, address } = req.body;
+
+    // Check if all required fields are present
+    if (!firstName || !lastName || !phone || !address) {
+      return res.status(400).json({ error: 'All fields are required: firstName, lastName, phone, address' });
+    }
+
+    // Check if the phone number already exists
+    const existingContact = await Contact.findOne({ phone });
+    if (existingContact) {
+      return res.status(400).json({ error: 'Phone number already exists' });
+    }
+
     const contact = new Contact(req.body);
     await contact.save();
     logger.info(`Contact created: ${contact._id}`);
@@ -101,7 +115,7 @@ exports.getContactById = async (req, res) => {
 
 // Find a contact by phone
 exports.getContactByPhone = async (req, res) => {
-  const { phone } = req.query.phone;
+  const phone = req.query.phone;
   logger.debug(`Getting contact by phone: ${phone}`);
   try {
     const contact = await Contact.findOne({ phone });
@@ -119,17 +133,27 @@ exports.getContactByPhone = async (req, res) => {
 
 // Update a contact by ID
 exports.updateContact = async (req, res) => {
-  logger.debug(`Updating contact by ID: ${req.query.id}`, { body: req.body });
+  logger.debug(`Updating contact by ID: ${req.body._id}`, { body: req.body });
   try {
-    const contact = await Contact.findByIdAndUpdate(req.query.id, req.body, {
+    const { phone } = req.body;
+
+    // Check if the new phone number already exists (excluding the current contact being updated)
+    if (phone) {
+      const existingContact = await Contact.findOne({ phone });
+      if (existingContact && existingContact._id.toString() !== req.body._id) {
+        return res.status(400).json({ error: 'Phone number already exists' });
+      }
+    }
+
+    const contact = await Contact.findByIdAndUpdate(req.body._id, req.body, {
       new: true,
       runValidators: true
     });
     if (!contact) {
-      logger.warn(`Contact not found for update: ${req.query.id}`);
+      logger.warn(`Contact not found for update: ${req.body._id}`);
       return res.status(404).json({ error: 'Contact not found' });
     }
-    logger.info(`Updated contact: ${req.query.id}`);
+    logger.info(`Updated contact: ${req.body._id}`);
     res.json(contact);
   } catch (err) {
     logger.error('Error updating contact', err);
@@ -139,14 +163,14 @@ exports.updateContact = async (req, res) => {
 
 // Delete a contact by ID
 exports.deleteContact = async (req, res) => {
-  logger.debug(`Deleting contact by ID: ${req.body.id}`);
+  logger.debug(`Deleting contact by ID: ${req.query.id}`);
   try {
-    const contact = await Contact.findByIdAndDelete(req.body.id);
+    const contact = await Contact.findByIdAndDelete(req.query.id);
     if (!contact) {
-      logger.warn(`Contact not found for deletion: ${req.body.id}`);
+      logger.warn(`Contact not found for deletion: ${req.query.id}`);
       return res.status(404).json({ error: 'Contact not found' });
     }
-    logger.info(`Deleted contact: ${req.body.id}`);
+    logger.info(`Deleted contact: ${req.query.id}`);
     res.json({ message: 'Contact deleted' });
   } catch (err) {
     logger.error('Error deleting contact', err);
