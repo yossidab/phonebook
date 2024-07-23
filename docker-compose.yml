@@ -10,7 +10,6 @@ services:
       - PORT=5000
     depends_on:
       - mongo
-      - redis
 
   mongo:
     image: mongo:latest
@@ -18,11 +17,6 @@ services:
       - "27017:27017"
     volumes:
       - mongo-data:/data/db
-
-  redis:
-    image: redis:latest
-    ports:
-      - "6379:6379"
 
 volumes:
   mongo-data:

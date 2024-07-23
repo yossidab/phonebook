@@ -2,6 +2,7 @@ require('dotenv').config();
 const express = require('express');
 const morgan = require('morgan');
 const logger = require('./logger');
+const mongoose = require('./config/db');
 const contactRoutes = require('./routes/contactRoutes');
 
 const app = express();
@@ -29,3 +30,4 @@ process.on('uncaughtException', (err) => {
 });
 
 module.exports = app;
+
