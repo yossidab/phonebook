@@ -26,6 +26,9 @@ This is a simple RESTful API for managing a phonebook application. The API allow
 - Edit existing contacts
 - Delete contacts
 - Retrieve contacts with pagination and search functionality
+- Retrieve all contacts with pagination
+- Retrieve contact by phone number
+- Retrieve contact by contact ID
 
 ## Technologies Used
 
@@ -70,7 +73,7 @@ The server will start on `http://localhost:5000`.
 
 ### API Endpoints
 
-- **GET /api/contacts/get-contacts**: Retrieve all contacts with pagination and search, prefix search for Phone/FirstName/LastName/Address, like our mobile do.
+- **GET /api/contacts/get-contacts**: Retrieve all contacts with pagination and search, prefix search for Phone/FirstName/LastName/Address, like our mobile do. Using Mongo indexes to improve querys speed.
 - **GET /api/contacts/get-all-contact**: Retrieve all contacts with pagination without search.
 - **POST /api/contacts/create-contact**: Add a new contact (If this phone number is not in use by another contact).
 - **GET /api/contacts/get-contact-by-id/:id**: Retrieve a single contact by ID.
